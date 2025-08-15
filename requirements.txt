@@ -1,0 +1,36 @@
+# Core ML dependencies
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+joblib
+
+# Experiment tracking
+mlflow
+
+# Data versioning using Google Drive
+dvc[gdrive]
+
+# Backend API
+fastapi
+uvicorn[standard]
+pydantic
+
+# Interactive frontend
+streamlit
+
+# Logging
+loguru
+
+# .env file support
+python-dotenv
+
+# Monitoring with Prometheus
+prometheus-fastapi-instrumentator
+
+# Dev tools
+pytest
+black
+isort
+pre-commit
