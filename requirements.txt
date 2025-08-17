@@ -5,9 +5,12 @@ scikit-learn
 matplotlib
 seaborn
 joblib
+imbalanced-learn
+scikit-optimize
 
 # Experiment tracking
-mlflow
+mlflow==2.12.1
+dagshub
 
 # Data versioning using Google Drive
 dvc[gdrive]
