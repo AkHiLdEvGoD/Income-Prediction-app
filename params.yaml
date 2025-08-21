@@ -1,0 +1,14 @@
+data_preprocessing:
+  test_size : 0.15
+
+model_training:
+  model_type : knn
+  knn:
+    metric: manhattan 
+    n_neighbors: 6
+    weights: distance
+
+  logistic_regression:
+    C: 0.3142592889252027
+    solver: 'saga'
+    penalty: l2

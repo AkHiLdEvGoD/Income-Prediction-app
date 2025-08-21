@@ -1,20 +1,38 @@
 import pandas as pd
 from src.utils.logger import logger
-from src.utils.config import FEATURED_DATA_PATH,DATA_DIR
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OrdinalEncoder,StandardScaler
 from sklearn.compose import ColumnTransformer
 from imblearn.over_sampling import SMOTE
 import joblib
 import os
+import yaml
 
-def preprocess(df:pd.DataFrame,save_dir):
+def load_params(params_path:str):
+    try:
+        with open(params_path,'r') as f:
+            params = yaml.safe_load(f)
+        logger.info(f'Parameter retrieved from {params_path}')
+        return params
+    
+    except FileNotFoundError:
+        logger.error('File not found: %s', params_path)
+        raise
+    except yaml.YAMLError as e:
+        logger.error('YAML error: %s', e)
+        raise
+    except Exception as e:
+        logger.error('Unexpected error: %s', e)
+        raise
+
+
+def preprocess(df:pd.DataFrame,save_dir,test_size):
     try:
         logger.info('Starting Preprocessing data ...')
         df['income'] = df['income'].map({'>50K':1, '<=50K':0})
         X = df.drop('income',axis=1)
         y = df.loc[:,'income']
-        X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.15,random_state=42)
+        X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=test_size,random_state=42)
         logger.info('Data Splitted into training and test set')
 
         df_dtypes = X_train.dtypes
@@ -72,15 +90,3 @@ def save_preprocessed_data(X_train,X_test,y_train,y_test,destination_path):
         logger.error(f'Unexpected error occured while saving preprocessed data : {e}')
         raise
 
-def main():
-    try:
-        df = pd.read_csv(FEATURED_DATA_PATH)
-        X_train,X_test,y_train,y_test = preprocess(df,DATA_DIR)
-        save_preprocessed_data(X_train,X_test,y_train,y_test,destination_path=DATA_DIR)
-        logger.success('Data Preprocessing Completed')
-
-    except Exception as e:
-        logger.error(f'Failed to complete data Preprocessing process : {e}')
-
-if __name__ == '__main__':
-    main()

@@ -1,6 +1,5 @@
 import pandas as pd
 import os
-from src.utils.config import CLEANED_DATA_PATH,DATA_DIR
 from src.utils.logger import logger
 
 def feature_engineering(df:pd.DataFrame):
@@ -55,16 +54,3 @@ def save_df(df,destination_path):
     except Exception as e:
         logger.error(f'An unexpected error occured while saving cleaned data : {e}')
         raise
-
-def main():
-    try:
-        cleaned_df = pd.read_csv(CLEANED_DATA_PATH)
-        featured_df = feature_engineering(cleaned_df)
-        save_df(featured_df,DATA_DIR)
-        logger.success('Feature Engineering Completed')
-
-    except Exception as e:
-        logger.error(f'Failed to complete feature engineerirng process : {e}')
-
-if __name__ == '__main__':
-    main()

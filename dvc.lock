@@ -1,0 +1,170 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python src/stages/stage_01_data_ingestion.py
+    deps:
+    - path: src/components/data_ingestion.py
+      hash: md5
+      md5: 7e7d482ae1e33ff022699ae9ae269187
+      size: 1042
+    - path: src/stages/stage_01_data_ingestion.py
+      hash: md5
+      md5: 05b69632c4652e9a73368d8bdd82aeb9
+      size: 585
+    - path: src/utils/config.py
+      hash: md5
+      md5: 48ae8ab5513045966fadc1714c7b20f2
+      size: 513
+    outs:
+    - path: data/raw
+      hash: md5
+      md5: 460574487a254ec9938ff1e5a0fca056.dir
+      size: 5326370
+      nfiles: 1
+  data_cleaning:
+    cmd: python src/stages/stage_02_data_cleaning.py
+    deps:
+    - path: data/raw/raw_data.csv
+      hash: md5
+      md5: 7499896f3ed7f8749be9014f0fecafcb
+      size: 5326370
+    - path: src/components/data_cleaning.py
+      hash: md5
+      md5: 34a0f6bce5b5de3a6ed00424508aca1c
+      size: 2551
+    - path: src/stages/stage_02_data_cleaning.py
+      hash: md5
+      md5: de658e511d66a8ed7eccbc67c88d9293
+      size: 650
+    - path: src/utils/config.py
+      hash: md5
+      md5: 48ae8ab5513045966fadc1714c7b20f2
+      size: 513
+    outs:
+    - path: data/cleaned
+      hash: md5
+      md5: f607f5042ac59e56dc6fef84b400d8ef.dir
+      size: 3749010
+      nfiles: 1
+  feature_engineering:
+    cmd: python src/stages/stage_03_feature_engineering.py
+    deps:
+    - path: data/cleaned/cleaned_data.csv
+      hash: md5
+      md5: 1569875c9403c27dde6967bfc99a93bd
+      size: 3749010
+    - path: src/components/feature_engineering.py
+      hash: md5
+      md5: 66cd92b905c8202c8a34f957d525a8ea
+      size: 2214
+    - path: src/stages/stage_03_feature_engineering.py
+      hash: md5
+      md5: 14898004be44c13c269e539ff0532d0e
+      size: 675
+    - path: src/utils/config.py
+      hash: md5
+      md5: 48ae8ab5513045966fadc1714c7b20f2
+      size: 513
+    outs:
+    - path: data/featured
+      hash: md5
+      md5: e1e34d6f2503acd103ea62323c4ea591.dir
+      size: 3063211
+      nfiles: 1
+  data_preprocessing:
+    cmd: python src/stages/stage_04_data_preprocessing.py
+    deps:
+    - path: data/featured/featured_data.csv
+      hash: md5
+      md5: c902e130d901a291b2ed3264c7cbcd86
+      size: 3063211
+    - path: src/components/data_preprocessing.py
+      hash: md5
+      md5: 7a9926caf3ee9c1e413a0657a00e65f3
+      size: 3797
+    - path: src/stages/stage_04_data_preprocessing.py
+      hash: md5
+      md5: daa4a4e4962a12619bab9e1a4f37e6dd
+      size: 879
+    - path: src/utils/config.py
+      hash: md5
+      md5: 48ae8ab5513045966fadc1714c7b20f2
+      size: 513
+    params:
+      params.yaml:
+        data_preprocessing.test_size: 0.15
+    outs:
+    - path: data/artifacts/preprocessor.pkl
+      hash: md5
+      md5: 1f6281fd074d0ecadb16cbb957bff240
+      size: 4475
+    - path: data/processed/
+      hash: md5
+      md5: 2b76eb801da16a551cdd9bd59f7165a4.dir
+      size: 9007885
+      nfiles: 2
+  model_training:
+    cmd: python src/stages/stage_05_model_training.py
+    deps:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 3a7d3f7f828033c2b0945e09a0ce9c0a
+      size: 8006324
+    - path: src/components/model_training.py
+      hash: md5
+      md5: 82974a56b9d385d38f2574b68f972edb
+      size: 2304
+    - path: src/stages/stage_05_model_training.py
+      hash: md5
+      md5: ab8992113ec41c3d3840b192cc780c47
+      size: 613
+    - path: src/utils/config.py
+      hash: md5
+      md5: 48ae8ab5513045966fadc1714c7b20f2
+      size: 513
+    params:
+      params.yaml:
+        model_training.knn.metric: manhattan
+        model_training.knn.n_neighbors: 6
+        model_training.knn.weights: distance
+        model_training.logistic_regression.C: 0.3142592889252027
+        model_training.logistic_regression.penalty: l2
+        model_training.logistic_regression.solver: saga
+        model_training.model_type: knn
+    outs:
+    - path: data/artifacts/model/model.pkl
+      hash: md5
+      md5: dbcb1998f70fa9615e2284734599b82c
+      size: 10175174
+  model_evaluation:
+    cmd: python src/stages/stage_06_model_evaluation.py
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 40c0a9c0ff4aaf9239dea7a506c7a571
+      size: 1001561
+    - path: src/components/model_evaluation.py
+      hash: md5
+      md5: 466b23bbe81824937e4682c10018bd70
+      size: 4251
+    - path: src/stages/stage_06_model_evaluation.py
+      hash: md5
+      md5: abea27ed2f7a5035268fd5c70b201c42
+      size: 1911
+    - path: src/utils/config.py
+      hash: md5
+      md5: 48ae8ab5513045966fadc1714c7b20f2
+      size: 513
+    params:
+      params.yaml:
+        model_training.model_type: knn
+    outs:
+    - path: data/artifacts/metrics
+      hash: md5
+      md5: 5f9daa4bdc6ec3badf33c6371f9c9b74.dir
+      size: 16398
+      nfiles: 3
+    - path: data/artifacts/model_info.json
+      hash: md5
+      md5: 580a53023231695aed955e8aba75c260
+      size: 107

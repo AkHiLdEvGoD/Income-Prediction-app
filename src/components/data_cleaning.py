@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import os
 from src.utils.logger import logger
-from src.utils.config import RAW_DATA_PATH,DATA_DIR
 
 def cleaning_data(df:pd.DataFrame):
     try: 
@@ -67,17 +66,3 @@ def save_cleaned_data(df:pd.DataFrame,destination_path:str):
     except Exception as e:
         logger.error(f'An unexpected error occured while saving cleaned data : {e}')
         raise
-
-
-def main():
-    try:
-        raw_df = pd.read_csv(RAW_DATA_PATH)
-        cleaned_df = cleaning_data(raw_df)
-        save_cleaned_data(cleaned_df,DATA_DIR)
-        logger.success('Data Cleaning Completed')
-    
-    except Exception as e:
-        logger.error(f'Failed to complete data cleaning process : {e}')
-
-if __name__ == '__main__':
-    main()

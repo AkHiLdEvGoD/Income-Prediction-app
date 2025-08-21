@@ -1,17 +1,29 @@
 import os
 import io
-from dotenv import load_dotenv
-import dagshub
-import mlflow
-import mlflow.sklearn
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score,recall_score,f1_score,precision_score,classification_report,confusion_matrix
 import joblib
 import pandas as pd
 from src.utils.logger import logger
-from src.utils.config import MODEL_PATH,TEST_DATA_PATH,MLFLOW_TRACKING_URI,DATA_DIR,ARTIFACTS_DIR
 import json
+import yaml
+
+def load_params(params_path:str):
+    try:
+        with open(params_path,'r') as f:
+            params = yaml.safe_load(f)
+        logger.info(f'Parameter retrieved from {params_path}')
+        return params
+    except FileNotFoundError:
+        logger.error('File not found: %s', params_path)
+        raise
+    except yaml.YAMLError as e:
+        logger.error('YAML error: %s', e)
+        raise
+    except Exception as e:
+        logger.error('Unexpected error: %s', e)
+        raise
 
 def load_model(model_path):
     try:
@@ -112,33 +124,4 @@ def save_model_info(run_id,model_path,file_path):
         logger.info(f'Model info saved to {file_path}')
     except Exception as e:
         logger.error(f'Error occurred while saving the model info: {e}')
-        raise
-
-
-def main():
-    load_dotenv()
-    tracking_uri = os.getenv('MLFLOW_TRACKING_URI')
-    repo_name = os.getenv('DAGSHUB_REPO_NAME')
-    repo_owner = os.getenv('DAGSHUB_REPO_OWNER')
-    mlflow.set_tracking_uri(tracking_uri)
-    dagshub.init(repo_name=repo_name,repo_owner=repo_owner,mlflow=True)
-    mlflow.set_experiment('Pipeline')
-    with mlflow.start_run() as run:
-        try:
-            model = load_model(MODEL_PATH)
-            test_data = load_data(TEST_DATA_PATH)
-            metrics,cm,clf_report = evaluate_model(model,test_data)
-            save_metrics(metrics,cm,clf_report,ARTIFACTS_DIR)
-            for key, value in metrics.items():
-                mlflow.log_metric(key, value)
-            
-            mlflow.sklearn.log_model(model,'model')
-            mlflow.log_artifacts(ARTIFACTS_DIR)
-            save_model_info(run.info.run_id,MODEL_PATH,DATA_DIR)
-            logger.success('Model Evaluation logged and Completed')
-
-        except Exception as e:
-            logger.error(f'Unexpected error occure during Model Evaluation : {e}')
-
-if __name__ == '__main__':
-    main()           
+        raise           

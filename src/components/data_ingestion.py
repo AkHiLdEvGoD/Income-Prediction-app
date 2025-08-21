@@ -1,8 +1,6 @@
 import pandas as pd
-import numpy as np
 import os
 from src.utils.logger import logger
-from src.utils.config import DATA_DIR,DATA_URL
 
 def load_data(data_url:str):
     logger.info(f'Reading data from {data_url}')
@@ -29,16 +27,3 @@ def save_data(df:pd.DataFrame,destination_path):
     except Exception as e:
         logger.error(f'An unexpected error occured while saving the data : {e}')
         raise
-
-def main():
-    try:
-        df = load_data(DATA_URL)
-        save_data(df,destination_path=DATA_DIR)
-        logger.success('Data Ingestion Completed')
-    
-    except Exception as e:
-        logger.error(f'Failed to complete data ingestion process : {e}')
-        print('error',e)
-
-if __name__ == '__main__':
-    main()
