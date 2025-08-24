@@ -73,3 +73,11 @@ stages:
     outs:
       - data/artifacts/metrics
       - data/artifacts/model_info.json
+
+  model_registry:
+    cmd : python src/stages/stage_07_model_registry.py
+    deps:
+      - src/stages/stage_07_model_registry.py
+      - src/components/model_registry.py
+      - src/utils/config.py
+      - data/artifacts/model_info.json
