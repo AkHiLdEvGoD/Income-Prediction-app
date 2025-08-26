@@ -96,24 +96,24 @@ stages:
     outs:
     - path: data/artifacts/preprocessor.pkl
       hash: md5
-      md5: 1f6281fd074d0ecadb16cbb957bff240
-      size: 4475
+      md5: 9d6a4489ab4e8ea59e12e0470180cb6b
+      size: 4481
     - path: data/processed/
       hash: md5
-      md5: 2b76eb801da16a551cdd9bd59f7165a4.dir
-      size: 9007885
+      md5: 864d0389c1ed3b06437785fba51b6344.dir
+      size: 8961009
       nfiles: 2
   model_training:
     cmd: python src/stages/stage_05_model_training.py
     deps:
     - path: data/processed/train.csv
       hash: md5
-      md5: 3a7d3f7f828033c2b0945e09a0ce9c0a
-      size: 8006324
+      md5: 79050d3ea1bb016bdd9fed6e936764af
+      size: 7964890
     - path: src/components/model_training.py
       hash: md5
-      md5: 82974a56b9d385d38f2574b68f972edb
-      size: 2304
+      md5: bf6eefe4e10845f2afe1c93db4867629
+      size: 2397
     - path: src/stages/stage_05_model_training.py
       hash: md5
       md5: ab8992113ec41c3d3840b192cc780c47
@@ -132,25 +132,26 @@ stages:
         model_training.logistic_regression.solver: saga
         model_training.model_type: knn
     outs:
-    - path: data/artifacts/model/model.pkl
+    - path: data/artifacts/model/
       hash: md5
-      md5: dbcb1998f70fa9615e2284734599b82c
-      size: 10175174
+      md5: 7dff96f87cdd61e896302d4d37a204ed.dir
+      size: 5680464
+      nfiles: 5
   model_evaluation:
     cmd: python src/stages/stage_06_model_evaluation.py
     deps:
     - path: data/processed/test.csv
       hash: md5
-      md5: 40c0a9c0ff4aaf9239dea7a506c7a571
-      size: 1001561
+      md5: 82536763f140611a04e2a063ead1163e
+      size: 996119
     - path: src/components/model_evaluation.py
       hash: md5
-      md5: 466b23bbe81824937e4682c10018bd70
-      size: 4251
+      md5: 897e79c41d6993505127fd526f758d91
+      size: 4288
     - path: src/stages/stage_06_model_evaluation.py
       hash: md5
-      md5: abea27ed2f7a5035268fd5c70b201c42
-      size: 1911
+      md5: 5dac455df1bacfd2c2f33b7321ff4480
+      size: 1919
     - path: src/utils/config.py
       hash: md5
       md5: 7b5ed7c945c068da3b472c17945a2d84
@@ -161,28 +162,28 @@ stages:
     outs:
     - path: data/artifacts/metrics
       hash: md5
-      md5: 5f9daa4bdc6ec3badf33c6371f9c9b74.dir
-      size: 16398
+      md5: eb992d54d15b3e6f652d0f1b33c1422a.dir
+      size: 16253
       nfiles: 3
     - path: data/artifacts/model_info.json
       hash: md5
-      md5: d9a35f11b37be1abec65f26281c92ad3
-      size: 107
+      md5: 87edc5d336e8cb17ed6ffa2fc5e0f4d9
+      size: 97
   model_registry:
     cmd: python src/stages/stage_07_model_registry.py
     deps:
     - path: data/artifacts/model_info.json
       hash: md5
-      md5: d9a35f11b37be1abec65f26281c92ad3
-      size: 107
+      md5: 87edc5d336e8cb17ed6ffa2fc5e0f4d9
+      size: 97
     - path: src/components/model_registry.py
       hash: md5
       md5: 2f4f5d39bd34f9e271e5949c18a075ab
       size: 1255
     - path: src/stages/stage_07_model_registry.py
       hash: md5
-      md5: 854a4f6b6f75109a940eea52f37f6fb5
-      size: 933
+      md5: 0e9e5a54169f65e25b8106fffc0e69f7
+      size: 927
     - path: src/utils/config.py
       hash: md5
       md5: 7b5ed7c945c068da3b472c17945a2d84

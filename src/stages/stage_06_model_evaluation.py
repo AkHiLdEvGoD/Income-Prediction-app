@@ -15,7 +15,7 @@ def main():
     repo_owner = os.getenv('DAGSHUB_REPO_OWNER')
     mlflow.set_tracking_uri(tracking_uri)
     dagshub.init(repo_name=repo_name,repo_owner=repo_owner,mlflow=True)
-    mlflow.set_experiment('Pipeline')
+    mlflow.set_experiment('project_pipeline')
     with mlflow.start_run() as run:
         try:
             params = load_params('./params.yaml')           

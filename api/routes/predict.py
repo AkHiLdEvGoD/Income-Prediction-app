@@ -9,7 +9,7 @@ router = APIRouter()
 @router.post('/predict')
 async def predict(request:Request,input_data:InputData):
     try:
-        input_df = pd.DataFrame([input_data.dict()])
+        input_df = pd.DataFrame([input_data.dict(by_alias=True)])
         model = request.app.state.model
         preprocessor = request.app.state.preprocessor
         

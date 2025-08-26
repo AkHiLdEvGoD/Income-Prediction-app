@@ -4,6 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score,recall_score,f1_score,precision_score,classification_report,confusion_matrix
 import joblib
+import mlflow.sklearn
 import pandas as pd
 from src.utils.logger import logger
 import json
@@ -27,7 +28,7 @@ def load_params(params_path:str):
 
 def load_model(model_path):
     try:
-        model = joblib.load(model_path)
+        model = mlflow.sklearn.load_model(model_path)
         logger.info('Model Loaded for evaluation')
         return model
     

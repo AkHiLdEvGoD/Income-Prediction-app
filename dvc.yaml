@@ -59,7 +59,7 @@ stages:
       - model_training.knn.weights
 
     outs:
-      - data/artifacts/model/model.pkl
+      - data/artifacts/model/
 
   model_evaluation:
     cmd : python src/stages/stage_06_model_evaluation.py

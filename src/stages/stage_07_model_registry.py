@@ -17,7 +17,7 @@ def main():
     dagshub.init(repo_name=repo_name,repo_owner=repo_owner,mlflow=True)
     try:
         model_info = load_model_info(MODEL_INFO_PATH)
-        model_name = 'income_prediction_model'
+        model_name = 'income_pred_model'
         register_model(model_name,model_info)
     except Exception as e:
         logger.error(f'Failed to complete the model registration process: {e}')

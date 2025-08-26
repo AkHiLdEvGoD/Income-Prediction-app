@@ -9,15 +9,15 @@ imbalanced-learn
 scikit-optimize
 
 # Experiment tracking
-mlflow==2.12.1
+mlflow
 dagshub
 
-# Data versioning using Google Drive
-dvc[gdrive]
+# Data versioning (local-only DVC)
+dvc
 
 # Backend API
 fastapi
-uvicorn[standard]
+uvicorn
 pydantic
 
 # Interactive frontend
@@ -26,7 +26,7 @@ streamlit
 # Logging
 loguru
 
-# .env file support
+# .env support
 python-dotenv
 
 # Monitoring with Prometheus

@@ -27,7 +27,7 @@ def get_latest_model_version(model_name: str):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    model_name = "income_prediction_model"
+    model_name = "income_pred_model"
     model_version = get_latest_model_version(model_name)
     if not model_version:
         raise RuntimeError(f"No versions found for model: {model_name}")

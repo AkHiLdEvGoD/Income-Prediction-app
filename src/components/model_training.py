@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import joblib
+import mlflow.sklearn
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from src.utils.logger import logger
@@ -60,7 +61,8 @@ def save_model(model,destination_path):
     try:
         model_path = os.path.join(destination_path,'model')
         os.makedirs(model_path,exist_ok=True)
-        joblib.dump(model,os.path.join(model_path,'model.pkl'))
+        # joblib.dump(model,os.path.join(model_path,'model.pkl'))
+        mlflow.sklearn.save_model(sk_model=model, path=model_path)
         logger.info(f'Model saved to path : {os.path.join(model_path,"model.pkl")}')
     except Exception as e:
         logger.error(f'Error occurred while saving the model: {e}')
