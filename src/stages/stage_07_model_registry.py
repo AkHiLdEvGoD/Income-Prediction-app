@@ -10,6 +10,9 @@ from dotenv import load_dotenv
 
 def main():
     load_dotenv()
+    dagshub_token = os.getenv('DAGSHUB_TOKEN')
+    os.environ['MLFLOW_TRACKING_USERNAME']= dagshub_token
+    os.environ['MLFLOW_TRACKING_PASSWORD'] = dagshub_token
     repo_name = os.getenv('DAGSHUB_REPO_NAME')
     repo_owner = os.getenv('DAGSHUB_REPO_OWNER')
     tracking_uri = os.getenv('MLFLOW_TRACKING_URI')
