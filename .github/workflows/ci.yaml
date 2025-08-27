@@ -45,21 +45,21 @@ jobs:
               echo "MODEL_INFO_PATH=${{ secrets.MODEL_INFO_PATH }}" >> .env
               echo "PREPROCESSOR_PATH=${{ secrets.PREPROCESSOR_PATH }}" >> .env
 
-          # - name: Install DVC and DagsHub Support
-          #   run: |
-          #     pip install "dvc[http]" dagshub
+          - name: Install DVC and DagsHub Support
+            run: |
+              pip install "dvc[http]" dagshub
 
-          # - name: Set up DVC remote authentication
-          #   run: |
-          #     dvc remote modify origin --local auth basic
-          #     dvc remote modify origin --local user AkHiLdEvGoD
-          #     dvc remote modify origin --local password ${{ secrets.PERSONALITY_TEST }}
+          - name: Set up DVC remote authentication
+            run: |
+              dvc remote modify origin --local auth basic
+              dvc remote modify origin --local user AkHiLdEvGoD
+              dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
 
           - name: Pull DVC data
             run: dvc pull
 
           - name: run pipeline
-            # env:
-            #   # PERSONALITY_TEST: ${{ secrets.PERSONALITY_TEST }}
+            env:
+              PERSONALITY_TEST: ${{ secrets.DAGSHUB_TOKEN }}
             run: |
               dvc repro
