@@ -31,6 +31,20 @@ jobs:
               python -m pip install --upgrade pip
               pip install -r requirements.txt
 
+          - name: Create .env file
+            run: |
+              echo "DATA_DIR=${{ secrets.DATA_DIR }}" >> .env
+              echo "ARTIFACTS_DIR=${{ secrets.ARTIFACTS_DIR }}" >> .env
+              echo "DATA_URL=${{ secrets.DATA_URL }}" >> .env
+              echo "RAW_DATA_PATH=${{ secrets.RAW_DATA_PATH }}" >> .env
+              echo "CLEANED_DATA_PATH=${{ secrets.CLEANED_DATA_PATH }}" >> .env
+              echo "FEATURED_DATA_PATH=${{ secrets.FEATURED_DATA_PATH }}" >> .env
+              echo "PROCESSED_DATA_PATH=${{ secrets.PROCESSED_DATA_PATH }}" >> .env
+              echo "MODEL_PATH=${{ secrets.MODEL_PATH }}" >> .env
+              echo "TEST_DATA=${{ secrets.TEST_DATA }}" >> .env
+              echo "MODEL_INFO_PATH=${{ secrets.MODEL_INFO_PATH }}" >> .env
+              echo "PREPROCESSOR_PATH=${{ secrets.PREPROCESSOR_PATH }}" >> .env
+
           # - name: Install DVC and DagsHub Support
           #   run: |
           #     pip install "dvc[http]" dagshub
@@ -41,8 +55,8 @@ jobs:
           #     dvc remote modify origin --local user AkHiLdEvGoD
           #     dvc remote modify origin --local password ${{ secrets.PERSONALITY_TEST }}
 
-          # - name: Pull DVC data
-          #   run: dvc pull
+          - name: Pull DVC data
+            run: dvc pull
 
           - name: run pipeline
             # env:
