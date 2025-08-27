@@ -18,7 +18,7 @@ def main():
     os.environ['MLFLOW_TRACKING_PASSWORD'] = dagshub_token
     dagshub_url = "https://dagshub.com"
     repo_owner = "AkHiLdEvGoD"
-    repo_name = "income-Prediction-app"
+    repo_name = "Income-Prediction-app"
 
     mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
     # mlflow.set_tracking_uri(tracking_uri)
