@@ -1,0 +1,51 @@
+name: CI Pipeline
+
+on:
+  push:
+    paths-ignore:
+      - 'README.md'
+      
+jobs:
+  project-testing:
+    runs-on: ubuntu-latest
+
+    steps:
+          - name: checkout code
+            uses: actions/checkout@v3
+
+          - name: setup python
+            uses: actions/setup-python@v4
+            with:
+              python-version: '3.12.1'
+
+          - name: Cache pip dependencies
+            uses: actions/cache@v3
+            with:
+              path: ~/.cache/pip
+              key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+              restore-keys: |
+                ${{ runner.os }}-pip-
+
+          - name: Install dependencies
+            run: |
+              python -m pip install --upgrade pip
+              pip install -r requirements.txt
+
+          # - name: Install DVC and DagsHub Support
+          #   run: |
+          #     pip install "dvc[http]" dagshub
+
+          # - name: Set up DVC remote authentication
+          #   run: |
+          #     dvc remote modify origin --local auth basic
+          #     dvc remote modify origin --local user AkHiLdEvGoD
+          #     dvc remote modify origin --local password ${{ secrets.PERSONALITY_TEST }}
+
+          # - name: Pull DVC data
+          #   run: dvc pull
+
+          - name: run pipeline
+            # env:
+            #   # PERSONALITY_TEST: ${{ secrets.PERSONALITY_TEST }}
+            run: |
+              dvc repro
