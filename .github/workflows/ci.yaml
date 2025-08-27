@@ -45,9 +45,9 @@ jobs:
               echo "MODEL_INFO_PATH=${{ secrets.MODEL_INFO_PATH }}" >> .env
               echo "PREPROCESSOR_PATH=${{ secrets.PREPROCESSOR_PATH }}" >> .env
               echo "MLFLOW_TRACKING_PASSWORD = ${{ secrets.DAGSHUB_TOKEN }}" >> .env
-              echo "MLFLOW_TRACKING_URI" = ${{ secrets.MLFLOW_TRACKING_URI }} >> .env
-              echo "DAGSHUB_REPO_NAME" = ${{ secrets.DAGSHUB_REPO_NAME }} >> .env
-              echo "DAGSHUB_USERNAME" = ${{ secrets.DAGSHUB_USERNAME }} >> .env
+              echo "MLFLOW_TRACKING_URI = ${{ secrets.MLFLOW_TRACKING_URI }}" >> .env
+              echo "DAGSHUB_REPO_NAME = ${{ secrets.DAGSHUB_REPO_NAME }}" >> .env
+              echo "DAGSHUB_USERNAME = ${{ secrets.DAGSHUB_USERNAME }}" >> .env
 
 
           - name: Install DVC and DagsHub Support
@@ -64,5 +64,10 @@ jobs:
             run: dvc pull
 
           - name: run pipeline
+            env:
+              MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
+              MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+              DAGSHUB_REPO_NAME: ${{ secrets.DAGSHUB_REPO_NAME }}
+              DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
             run: |
               dvc repro
