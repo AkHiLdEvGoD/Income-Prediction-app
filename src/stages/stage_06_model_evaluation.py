@@ -14,7 +14,7 @@ def main():
     # tracking_uri = os.getenv('MLFLOW_TRACKING_URI')
     # repo_name = os.getenv('DAGSHUB_REPO_NAME')
     # repo_owner = os.getenv('DAGSHUB_REPO_OWNER')
-    os.environ['MLFLOW_TRACKING_USERNAME']= repo_owner
+    os.environ['MLFLOW_TRACKING_USERNAME']= dagshub_token
     os.environ['MLFLOW_TRACKING_PASSWORD'] = dagshub_token
     dagshub_url = "https://dagshub.com"
     repo_owner = "AkHiLdEvGoD"
