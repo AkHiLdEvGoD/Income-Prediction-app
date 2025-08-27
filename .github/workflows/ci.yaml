@@ -65,6 +65,6 @@ jobs:
 
           - name: run pipeline
             env:
-              MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
+              DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
             run: |
               dvc repro
