@@ -6,17 +6,22 @@ from src.components.model_registry import load_model_info,register_model
 from src.utils.config import MODEL_INFO_PATH
 import mlflow
 import dagshub
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 def main():
-    load_dotenv()
+    # load_dotenv()
     dagshub_token = os.getenv('MLFLOW_TRACKING_PASSWORD')
-    tracking_uri = os.getenv('MLFLOW_TRACKING_URI')
-    repo_name = os.getenv('DAGSHUB_REPO_NAME')
-    repo_owner = os.getenv('DAGSHUB_REPO_OWNER')
+    # tracking_uri = os.getenv('MLFLOW_TRACKING_URI')
+    # repo_name = os.getenv('DAGSHUB_REPO_NAME')
+    # repo_owner = os.getenv('DAGSHUB_REPO_OWNER')
     os.environ['MLFLOW_TRACKING_USERNAME']= repo_owner
     os.environ['MLFLOW_TRACKING_PASSWORD'] = dagshub_token
-    mlflow.set_tracking_uri(tracking_uri)
+    dagshub_url = "https://dagshub.com"
+    repo_owner = "AkHiLdEvGoD"
+    repo_name = "income-Prediction-app"
+
+    mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
+    # mlflow.set_tracking_uri(tracking_uri)
     dagshub.init(repo_name=repo_name,repo_owner=repo_owner,mlflow=True)
     try:
         model_info = load_model_info(MODEL_INFO_PATH)
