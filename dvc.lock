@@ -134,7 +134,7 @@ stages:
     outs:
     - path: data/artifacts/model/
       hash: md5
-      md5: 7dff96f87cdd61e896302d4d37a204ed.dir
+      md5: afdaf63f282f6f9eafedf0acbd6d2a4b.dir
       size: 5680464
       nfiles: 5
   model_evaluation:
@@ -167,14 +167,14 @@ stages:
       nfiles: 3
     - path: data/artifacts/model_info.json
       hash: md5
-      md5: 87edc5d336e8cb17ed6ffa2fc5e0f4d9
+      md5: 0ddf70cc02e2a21646589f05594c70de
       size: 97
   model_registry:
     cmd: python src/stages/stage_07_model_registry.py
     deps:
     - path: data/artifacts/model_info.json
       hash: md5
-      md5: 87edc5d336e8cb17ed6ffa2fc5e0f4d9
+      md5: 0ddf70cc02e2a21646589f05594c70de
       size: 97
     - path: src/components/model_registry.py
       hash: md5
