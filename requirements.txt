@@ -1,39 +1,39 @@
 # Core ML dependencies
-pandas
-numpy
-scikit-learn
-matplotlib
-seaborn
-joblib
-imbalanced-learn
-scikit-optimize
+pandas==2.3.2
+numpy==2.3.2
+scikit-learn==1.7.1
+matplotlib==3.10.5
+seaborn==0.13.2
+joblib==1.5.1
+imbalanced-learn==0.14.0
+scikit-optimize==0.10.2
 
 # Experiment tracking
-mlflow
-dagshub
+mlflow==2.22.1
+dagshub==0.6.3
 
 # Data versioning (local-only DVC)
-dvc
+dvc==3.62.0
 
 # Backend API
-fastapi
-uvicorn
-pydantic
+fastapi==0.116.1
+uvicorn==0.35.0
+pydantic==2.11.7
 
 # Interactive frontend
-streamlit
+streamlit==1.48.1
 
 # Logging
-loguru
+loguru==0.7.3
 
 # .env support
-python-dotenv
+python-dotenv==1.1.1
 
 # Monitoring with Prometheus
-prometheus-fastapi-instrumentator
+prometheus-fastapi-instrumentator==7.1.0
 
 # Dev tools
-pytest
-black
-isort
-pre-commit
+pytest==8.4.1
+black==25.1.0
+isort==6.0.1
+pre-commit==4.3.0
