@@ -10,14 +10,14 @@ import dagshub
 
 def main():
     # load_dotenv()
-    # dagshub_username = os.getenv('DAGSHUB_USERNAME')
+    dagshub_username = os.getenv('DAGSHUB_USERNAME')
     dagshub_token = os.getenv('DAGSHUB_PASSWORD')
     if not dagshub_token:
         raise EnvironmentError('DAGSHUB_PASSWORD variable not set')
     # # tracking_uri = os.getenv('MLFLOW_TRACKING_URI')
     # # repo_name = os.getenv('DAGSHUB_REPO_NAME')
     # # repo_owner = os.getenv('DAGSHUB_REPO_OWNER')
-    os.environ['MLFLOW_TRACKING_USERNAME']= dagshub_token
+    os.environ['MLFLOW_TRACKING_USERNAME']= dagshub_username
     os.environ['MLFLOW_TRACKING_PASSWORD'] = dagshub_token
     dagshub_url = "https://dagshub.com"
     repo_owner = "AkHiLdEvGoD"
@@ -44,7 +44,7 @@ def main():
                 for param_name, param_value in params.items():
                     mlflow.log_param(param_name, param_value)
 
-            mlflow.sklearn.log_model(model,'model')
+            mlflow.sklearn.log_model(model,name='model')
             mlflow.log_artifacts(ARTIFACTS_DIR)
             save_model_info(run.info.run_id,MODEL_PATH,ARTIFACTS_DIR)
             logger.success('Model Evaluation logged and Completed')
