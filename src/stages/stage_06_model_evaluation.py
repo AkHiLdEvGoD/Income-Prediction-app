@@ -44,7 +44,7 @@ def main():
                 for param_name, param_value in params.items():
                     mlflow.log_param(param_name, param_value)
 
-            mlflow.sklearn.log_model(model,name='model')
+            mlflow.sklearn.log_model(model,'model')
             mlflow.log_artifacts(ARTIFACTS_DIR)
             save_model_info(run.info.run_id,MODEL_PATH,ARTIFACTS_DIR)
             logger.success('Model Evaluation logged and Completed')
