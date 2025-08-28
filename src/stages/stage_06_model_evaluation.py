@@ -10,13 +10,14 @@ from dotenv import load_dotenv
 
 def main():
     load_dotenv()
-    dagshub_token = os.getenv('MLFLOW_PASSWORD')
-    if not dagshub_token:
-        raise EnvironmentError('MLFLOW_PASSWORD variable not set')
+    dagshub_username = os.getenv('DAGSHUB_USERNAME')
+    dagshub_token = os.getenv('DAGSHUB_PASSWORD')
+    if not dagshub_token or not dagshub_username:
+        raise EnvironmentError('DAGSHUB_USERNAME and DAGSHUB_PASSWORD variable not set')
     # tracking_uri = os.getenv('MLFLOW_TRACKING_URI')
     # repo_name = os.getenv('DAGSHUB_REPO_NAME')
     # repo_owner = os.getenv('DAGSHUB_REPO_OWNER')
-    os.environ['MLFLOW_TRACKING_USERNAME']= dagshub_token
+    os.environ['MLFLOW_TRACKING_USERNAME']= dagshub_username
     os.environ['MLFLOW_TRACKING_PASSWORD'] = dagshub_token
     dagshub_url = "https://dagshub.com"
     repo_owner = "AkHiLdEvGoD"
