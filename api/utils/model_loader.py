@@ -10,19 +10,31 @@ import dagshub
 from .config import PREPROCESSOR_PATH
 
 load_dotenv()
-dagshub_token = os.getenv('DAGSHUB_TOKEN')
-os.environ['MLFLOW_TRACKING_USERNAME']= dagshub_token
-os.environ['MLFLOW_TRACKING_PASSWORD'] = dagshub_token
-tracking_uri = os.getenv('MLFLOW_TRACKING_URI')
-repo_name = os.getenv('DAGSHUB_REPO_NAME')
-repo_owner = os.getenv('DAGSHUB_REPO_OWNER')
+# 
+dagshub_url = "https://dagshub.com"
+repo_owner = "AkHiLdEvGoD"
+repo_name = "Income-Prediction-app"
 
-mlflow.set_tracking_uri(tracking_uri)
-dagshub.init(repo_name=repo_name, repo_owner=repo_owner, mlflow=True)
+if os.getenv('CI')=='true':
+    dagshub_username = os.getenv('DAGSHUB_USERNAME')
+    dagshub_token = os.getenv('DAGSHUB_PASSWORD')
+    if not dagshub_token:
+        raise EnvironmentError('DAGSHUB_PASSWORD variable not set')
+    os.environ['MLFLOW_TRACKING_USERNAME']= dagshub_username
+    os.environ['MLFLOW_TRACKING_PASSWORD'] = dagshub_token
+    mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
+
+else: 
+    tracking_uri = os.getenv('MLFLOW_TRACKING_URI')
+    repo_name = os.getenv('DAGSHUB_REPO_NAME')
+    repo_owner = os.getenv('DAGSHUB_REPO_OWNER')
+
+    mlflow.set_tracking_uri(tracking_uri)
+    dagshub.init(repo_name=repo_name, repo_owner=repo_owner, mlflow=True)
 
 def get_latest_model_version(model_name: str):
     client = MlflowClient()
-    latest = client.get_latest_versions(model_name, stages=["Staging"])
+    latest = client.get_latest_versions(model_name, stages=["Production"])
     if not latest:
         latest = client.get_latest_versions(model_name, stages=["None"])
     return latest[0].version if latest else None

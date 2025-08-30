@@ -31,28 +31,27 @@ jobs:
               python -m pip install --upgrade pip
               pip install -r requirements.txt
 
-          - name: Create .env file
-            run: |
-              echo "DATA_DIR=${{ secrets.DATA_DIR }}" >> .env
-              echo "ARTIFACTS_DIR=${{ secrets.ARTIFACTS_DIR }}" >> .env
-              echo "DATA_URL=${{ secrets.DATA_URL }}" >> .env
-              echo "RAW_DATA_PATH=${{ secrets.RAW_DATA_PATH }}" >> .env
-              echo "CLEANED_DATA_PATH=${{ secrets.CLEANED_DATA_PATH }}" >> .env
-              echo "FEATURED_DATA_PATH=${{ secrets.FEATURED_DATA_PATH }}" >> .env
-              echo "PROCESSED_DATA_PATH=${{ secrets.PROCESSED_DATA_PATH }}" >> .env
-              echo "MODEL_PATH=${{ secrets.MODEL_PATH }}" >> .env
-              echo "TEST_DATA=${{ secrets.TEST_DATA }}" >> .env
-              echo "MODEL_INFO_PATH=${{ secrets.MODEL_INFO_PATH }}" >> .env
-              echo "PREPROCESSOR_PATH=${{ secrets.PREPROCESSOR_PATH }}" >> .env
-              echo "MLFLOW_TRACKING_PASSWORD=${{ secrets.DAGSHUB_TOKEN }}" >> .env
-              echo "MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}" >> .env
-              echo "DAGSHUB_REPO_NAME=${{ secrets.DAGSHUB_REPO_NAME }}" >> .env
-              echo "DAGSHUB_USERNAME=${{ secrets.DAGSHUB_USERNAME }}" >> .env
+          # - name: Create .env file
+          #   run: |
+          #     echo "DATA_DIR=${{ secrets.DATA_DIR }}" >> .env
+          #     echo "ARTIFACTS_DIR=${{ secrets.ARTIFACTS_DIR }}" >> .env
+          #     echo "DATA_URL=${{ secrets.DATA_URL }}" >> .env
+          #     echo "RAW_DATA_PATH=${{ secrets.RAW_DATA_PATH }}" >> .env
+          #     echo "CLEANED_DATA_PATH=${{ secrets.CLEANED_DATA_PATH }}" >> .env
+          #     echo "FEATURED_DATA_PATH=${{ secrets.FEATURED_DATA_PATH }}" >> .env
+          #     echo "PROCESSED_DATA_PATH=${{ secrets.PROCESSED_DATA_PATH }}" >> .env
+          #     echo "MODEL_PATH=${{ secrets.MODEL_PATH }}" >> .env
+          #     echo "TEST_DATA=${{ secrets.TEST_DATA }}" >> .env
+          #     echo "MODEL_INFO_PATH=${{ secrets.MODEL_INFO_PATH }}" >> .env
+          #     echo "PREPROCESSOR_PATH=${{ secrets.PREPROCESSOR_PATH }}" >> .env
+          #     echo "MLFLOW_TRACKING_PASSWORD=${{ secrets.DAGSHUB_TOKEN }}" >> .env
+          #     echo "MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}" >> .env
+          #     echo "DAGSHUB_REPO_NAME=${{ secrets.DAGSHUB_REPO_NAME }}" >> .env
+          #     echo "DAGSHUB_USERNAME=${{ secrets.DAGSHUB_USERNAME }}" >> .env
 
-
-          - name: Install DVC and DagsHub Support
-            run: |
-              pip install "dvc[http]" dagshub
+          # - name: Install DVC and DagsHub Support
+          #   run: |
+          #     pip install "dvc[http]" dagshub
 
           - name: Set up DVC remote authentication
             run: |
@@ -63,11 +62,30 @@ jobs:
           - name: Pull DVC data
             run: dvc pull
 
-          - name: run pipeline
+          - name: Run pipeline
             env:
                DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
                DAGSHUB_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
-              # MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
-              # DAGSHUB_REPO_NAME: ${{ secrets.DAGSHUB_REPO_NAME }}
             run: |
               dvc repro
+          
+          - name: Run model test
+            env:
+              DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
+              DAGSHUB_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
+            run: |
+              pytest tests/test_model.py --maxfail=1 --disable-warnings -q
+            
+          - name: Promote model to production
+            if: success()
+            env:
+              DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
+              DAGSHUB_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
+            run: python scripts/promote_model.py
+
+          - name: Run API tests
+            if: success()
+            env:
+              DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
+              DAGSHUB_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
+            run: pytest tests/test_api.py --maxfail=1 --disable-warnings -q

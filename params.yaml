@@ -2,7 +2,7 @@ data_preprocessing:
   test_size : 0.15
 
 model_training:
-  model_type : knn
+  model_type : logistic_regression
   knn:
     metric: manhattan 
     n_neighbors: 6
