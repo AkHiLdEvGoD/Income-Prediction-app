@@ -64,7 +64,7 @@ jobs:
               aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
           - name: Pull DVC data
-            run: dvc pull -v
+            run: dvc pull 
 
           - name: Run pipeline
             env:
@@ -93,3 +93,28 @@ jobs:
               DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
               DAGSHUB_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
             run: pytest tests/test_api.py --maxfail=1 --disable-warnings -q
+
+          - name: Log in to Amazon ECR
+            run: |
+              aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} | \
+              docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
+
+          - name: Build and Tag Docker Image
+            run: |
+              IMAGE_TAG=${{ github.sha }}
+              ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
+              REPO_NAME=${{ secrets.ECR_REPOSITORY }}
+
+              docker build -t $REPO_NAME:$IMAGE_TAG .
+
+              docker tag $REPO_NAME:$IMAGE_TAG $ECR_REGISTRY/$REPO_NAME:$IMAGE_TAG
+              docker tag $REPO_NAME:$IMAGE_TAG $ECR_REGISTRY/$REPO_NAME:latest
+
+          - name: Push Docker Image to ECR
+            run: |
+              IMAGE_TAG=${{ github.sha }}
+              ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
+              REPO_NAME=${{ secrets.ECR_REPOSITORY }}
+
+              docker push $ECR_REGISTRY/$REPO_NAME:$IMAGE_TAG
+              docker push $ECR_REGISTRY/$REPO_NAME:latest
