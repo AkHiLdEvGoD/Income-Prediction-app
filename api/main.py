@@ -4,3 +4,6 @@ from .routes.predict import router as predict_router
 
 app = FastAPI(title='Income Prediction API',lifespan=lifespan)
 app.include_router(predict_router)
+
+if __name__ == "__main__":
+    main()
