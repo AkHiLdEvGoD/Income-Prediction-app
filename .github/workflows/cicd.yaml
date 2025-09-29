@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CICD Pipeline
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - 'README.md'
       
 jobs:
-  project-testing:
+  countinous-integration:
     runs-on: ubuntu-latest
 
     steps:
@@ -118,3 +118,42 @@ jobs:
 
               docker push $ECR_REGISTRY/$REPO_NAME:$IMAGE_TAG
               docker push $ECR_REGISTRY/$REPO_NAME:latest
+
+  countinous-deployment:
+    needs: self-hosted
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Pull Docker Image from ECR
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
+          REPO_NAME=${{ secrets.ECR_REPOSITORY }}
+
+          docker pull $ECR_REGISTRY/$REPO_NAME:$IMAGE_TAG
+
+      - name: Run Docker Container
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
+          REPO_NAME=${{ secrets.ECR_REPOSITORY }}
+
+          docker run -d \
+            -p 8000:8000 \
+            --name mlops_app \
+            --env-file .env \
+            $ECR_REGISTRY/$REPO_NAME:$IMAGE_TAG
+
+        
