@@ -151,10 +151,6 @@ jobs:
           ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
           REPO_NAME=${{ secrets.ECR_REPOSITORY }}
 
-          docker run -d \
-            -p 8000:8000 \
-            --name mlops_app \
-            --env-file .env \
-            $ECR_REGISTRY/$REPO_NAME:$IMAGE_TAG
+          docker run -d -p 8000:8000 --name mlops_app $ECR_REGISTRY/$REPO_NAME:$IMAGE_TAG
 
         
