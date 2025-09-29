@@ -120,7 +120,8 @@ jobs:
               docker push $ECR_REGISTRY/$REPO_NAME:latest
 
   countinous-deployment:
-    needs: self-hosted
+    needs: countinous-integration
+    runs-on: self-hosted
     steps:
       - name: checkout
         uses: actions/checkout@v3
