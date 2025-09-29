@@ -9,7 +9,7 @@ COPY api/ /app/api
 COPY api/requirements.txt .
 COPY data/artifacts/preprocessor.pkl /app/data/artifacts/preprocessor.pkl
 
-RUN pip install --upgrade pip && pip install -r requirements.txt 
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt 
 
 EXPOSE 8000
 
