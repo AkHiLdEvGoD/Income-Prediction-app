@@ -170,6 +170,6 @@ jobs:
           ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
           REPO_NAME=${{ secrets.ECR_REPOSITORY }}
 
-          docker run -d -p 8000:8000 --name mlops_app -e DAGSHUB_USERNAME=${{ secrets.DAGSHUB_USERNAME }} -e DAGSHUB_PASSWORD=${{ secrets.DAGSHUB_TOKEN }} $ECR_REGISTRY/$REPO_NAME:$IMAGE_TAG
+          docker run -d -p 8000:8000 --name mlops_app -e DAGSHUB_USERNAME=${{ secrets.DAGSHUB_USERNAME }} -e DAGSHUB_PASSWORD=${{ secrets.DAGSHUB_TOKEN }} -e PREPROCESSOR_PATH=${{ secrets.PREPROCESSOR_PATH } $ECR_REGISTRY/$REPO_NAME:$IMAGE_TAG
 
         
