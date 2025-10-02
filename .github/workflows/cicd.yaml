@@ -1,175 +1,175 @@
-name: CICD Pipeline
+# name: CICD Pipeline
 
-on:
-  push:
-    paths-ignore:
-      - 'README.md'
+# on:
+#   push:
+#     paths-ignore:
+#       - 'README.md'
       
-jobs:
-  countinous-integration:
-    runs-on: ubuntu-latest
+# jobs:
+#   countinous-integration:
+#     runs-on: ubuntu-latest
 
-    steps:
-          - name: checkout code
-            uses: actions/checkout@v3
+#     steps:
+#           - name: checkout code
+#             uses: actions/checkout@v3
 
-          - name: setup python
-            uses: actions/setup-python@v4
-            with:
-              python-version: '3.12.1'
+#           - name: setup python
+#             uses: actions/setup-python@v4
+#             with:
+#               python-version: '3.12.1'
 
-          - name: Cache pip dependencies
-            uses: actions/cache@v3
-            with:
-              path: ~/.cache/pip
-              key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-              restore-keys: |
-                ${{ runner.os }}-pip-
+#           - name: Cache pip dependencies
+#             uses: actions/cache@v3
+#             with:
+#               path: ~/.cache/pip
+#               key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+#               restore-keys: |
+#                 ${{ runner.os }}-pip-
 
-          - name: Install dependencies
-            run: |
-              python -m pip install --upgrade pip
-              pip install -r requirements.txt
-              pip install "dvc[s3]"
+#           - name: Install dependencies
+#             run: |
+#               python -m pip install --upgrade pip
+#               pip install -r requirements.txt
+#               pip install "dvc[s3]"
 
-          - name: Create .env file
-            run: |
-              echo "DATA_DIR=${{ secrets.DATA_DIR }}" >> .env
-              echo "ARTIFACTS_DIR=${{ secrets.ARTIFACTS_DIR }}" >> .env
-              echo "DATA_URL=${{ secrets.DATA_URL }}" >> .env
-              echo "RAW_DATA_PATH=${{ secrets.RAW_DATA_PATH }}" >> .env
-              echo "CLEANED_DATA_PATH=${{ secrets.CLEANED_DATA_PATH }}" >> .env
-              echo "FEATURED_DATA_PATH=${{ secrets.FEATURED_DATA_PATH }}" >> .env
-              echo "PROCESSED_DATA_PATH=${{ secrets.PROCESSED_DATA_PATH }}" >> .env
-              echo "MODEL_PATH=${{ secrets.MODEL_PATH }}" >> .env
-              echo "TEST_DATA=${{ secrets.TEST_DATA }}" >> .env
-              echo "MODEL_INFO_PATH=${{ secrets.MODEL_INFO_PATH }}" >> .env
-              echo "PREPROCESSOR_PATH=${{ secrets.PREPROCESSOR_PATH }}" >> .env
-              echo "MLFLOW_TRACKING_PASSWORD=${{ secrets.DAGSHUB_TOKEN }}" >> .env
-              echo "MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}" >> .env
-              echo "DAGSHUB_REPO_NAME=${{ secrets.DAGSHUB_REPO_NAME }}" >> .env
-              echo "DAGSHUB_USERNAME=${{ secrets.DAGSHUB_USERNAME }}" >> .env
+#           - name: Create .env file
+#             run: |
+#               echo "DATA_DIR=${{ secrets.DATA_DIR }}" >> .env
+#               echo "ARTIFACTS_DIR=${{ secrets.ARTIFACTS_DIR }}" >> .env
+#               echo "DATA_URL=${{ secrets.DATA_URL }}" >> .env
+#               echo "RAW_DATA_PATH=${{ secrets.RAW_DATA_PATH }}" >> .env
+#               echo "CLEANED_DATA_PATH=${{ secrets.CLEANED_DATA_PATH }}" >> .env
+#               echo "FEATURED_DATA_PATH=${{ secrets.FEATURED_DATA_PATH }}" >> .env
+#               echo "PROCESSED_DATA_PATH=${{ secrets.PROCESSED_DATA_PATH }}" >> .env
+#               echo "MODEL_PATH=${{ secrets.MODEL_PATH }}" >> .env
+#               echo "TEST_DATA=${{ secrets.TEST_DATA }}" >> .env
+#               echo "MODEL_INFO_PATH=${{ secrets.MODEL_INFO_PATH }}" >> .env
+#               echo "PREPROCESSOR_PATH=${{ secrets.PREPROCESSOR_PATH }}" >> .env
+#               echo "MLFLOW_TRACKING_PASSWORD=${{ secrets.DAGSHUB_TOKEN }}" >> .env
+#               echo "MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}" >> .env
+#               echo "DAGSHUB_REPO_NAME=${{ secrets.DAGSHUB_REPO_NAME }}" >> .env
+#               echo "DAGSHUB_USERNAME=${{ secrets.DAGSHUB_USERNAME }}" >> .env
 
-          # - name: Set up DVC remote authentication
-          #   run: |
-          #     dvc remote modify dagshub --local auth basic
-          #     dvc remote modify dagshub --local user ${{ secrets.DAGSHUB_USERNAME }}
-          #     dvc remote modify dagshub --local password ${{ secrets.DAGSHUB_TOKEN }}
+#           # - name: Set up DVC remote authentication
+#           #   run: |
+#           #     dvc remote modify dagshub --local auth basic
+#           #     dvc remote modify dagshub --local user ${{ secrets.DAGSHUB_USERNAME }}
+#           #     dvc remote modify dagshub --local password ${{ secrets.DAGSHUB_TOKEN }}
 
-          - name: Configure AWS credentials
-            uses: aws-actions/configure-aws-credentials@v4
-            with:
-              aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-              aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-              aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+#           - name: Configure AWS credentials
+#             uses: aws-actions/configure-aws-credentials@v4
+#             with:
+#               aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#               aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#               aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-          - name: Pull DVC data
-            run: dvc pull 
+#           - name: Pull DVC data
+#             run: dvc pull 
 
-          - name: Run pipeline
-            env:
-               DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
-               DAGSHUB_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
-            run: |
-              dvc repro
+#           - name: Run pipeline
+#             env:
+#                DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
+#                DAGSHUB_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
+#             run: |
+#               dvc repro
           
-          - name: Run model test
-            env:
-              DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
-              DAGSHUB_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
-            run: |
-              pytest tests/test_model.py --maxfail=1 --disable-warnings -q
+#           - name: Run model test
+#             env:
+#               DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
+#               DAGSHUB_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
+#             run: |
+#               pytest tests/test_model.py --maxfail=1 --disable-warnings -q
             
-          - name: Promote model to production
-            if: success()
-            env:
-              DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
-              DAGSHUB_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
-            run: python scripts/promote_model.py
+#           - name: Promote model to production
+#             if: success()
+#             env:
+#               DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
+#               DAGSHUB_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
+#             run: python scripts/promote_model.py
 
-          - name: Run API tests
-            if: success()
-            env:
-              DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
-              DAGSHUB_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
-            run: pytest tests/test_api.py --maxfail=1 --disable-warnings -q
+#           - name: Run API tests
+#             if: success()
+#             env:
+#               DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
+#               DAGSHUB_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
+#             run: pytest tests/test_api.py --maxfail=1 --disable-warnings -q
 
-          - name: Log in to Amazon ECR
-            run: |
-              aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} | \
-              docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
+#           - name: Log in to Amazon ECR
+#             run: |
+#               aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} | \
+#               docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
 
-          - name: Build and Tag Docker Image
-            run: |
-              IMAGE_TAG=${{ github.sha }}
-              ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
-              REPO_NAME=${{ secrets.ECR_REPOSITORY }}
+#           - name: Build and Tag Docker Image
+#             run: |
+#               IMAGE_TAG=${{ github.sha }}
+#               ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
+#               REPO_NAME=${{ secrets.ECR_REPOSITORY }}
 
-              docker build -t $REPO_NAME:$IMAGE_TAG .
+#               docker build -t $REPO_NAME:$IMAGE_TAG .
 
-              docker tag $REPO_NAME:$IMAGE_TAG $ECR_REGISTRY/$REPO_NAME:$IMAGE_TAG
-              docker tag $REPO_NAME:$IMAGE_TAG $ECR_REGISTRY/$REPO_NAME:latest
+#               docker tag $REPO_NAME:$IMAGE_TAG $ECR_REGISTRY/$REPO_NAME:$IMAGE_TAG
+#               docker tag $REPO_NAME:$IMAGE_TAG $ECR_REGISTRY/$REPO_NAME:latest
 
-          - name: Push Docker Image to ECR
-            run: |
-              IMAGE_TAG=${{ github.sha }}
-              ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
-              REPO_NAME=${{ secrets.ECR_REPOSITORY }}
+#           - name: Push Docker Image to ECR
+#             run: |
+#               IMAGE_TAG=${{ github.sha }}
+#               ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
+#               REPO_NAME=${{ secrets.ECR_REPOSITORY }}
 
-              docker push $ECR_REGISTRY/$REPO_NAME:$IMAGE_TAG
-              docker push $ECR_REGISTRY/$REPO_NAME:latest
+#               docker push $ECR_REGISTRY/$REPO_NAME:$IMAGE_TAG
+#               docker push $ECR_REGISTRY/$REPO_NAME:latest
 
-  countinous-deployment:
-    needs: countinous-integration
-    runs-on: self-hosted
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
+#   countinous-deployment:
+#     needs: countinous-integration
+#     runs-on: self-hosted
+#     steps:
+#       - name: checkout
+#         uses: actions/checkout@v3
 
-      # - name: Create .env file
-      #   run: |
-      #       echo "DATA_DIR=${{ secrets.DATA_DIR }}" >> .env
-      #       echo "ARTIFACTS_DIR=${{ secrets.ARTIFACTS_DIR }}" >> .env
-      #       echo "DATA_URL=${{ secrets.DATA_URL }}" >> .env
-      #       echo "RAW_DATA_PATH=${{ secrets.RAW_DATA_PATH }}" >> .env
-      #       echo "CLEANED_DATA_PATH=${{ secrets.CLEANED_DATA_PATH }}" >> .env
-      #       echo "FEATURED_DATA_PATH=${{ secrets.FEATURED_DATA_PATH }}" >> .env
-      #       echo "PROCESSED_DATA_PATH=${{ secrets.PROCESSED_DATA_PATH }}" >> .env
-      #       echo "MODEL_PATH=${{ secrets.MODEL_PATH }}" >> .env
-      #       echo "TEST_DATA=${{ secrets.TEST_DATA }}" >> .env
-      #       echo "MODEL_INFO_PATH=${{ secrets.MODEL_INFO_PATH }}" >> .env
-      #       echo "PREPROCESSOR_PATH=${{ secrets.PREPROCESSOR_PATH }}" >> .env
-      #       echo "MLFLOW_TRACKING_PASSWORD=${{ secrets.DAGSHUB_TOKEN }}" >> .env
-      #       echo "MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}" >> .env
-      #       echo "DAGSHUB_REPO_NAME=${{ secrets.DAGSHUB_REPO_NAME }}" >> .env
-      #       echo "DAGSHUB_USERNAME=${{ secrets.DAGSHUB_USERNAME }}" >> .env
+#       # - name: Create .env file
+#       #   run: |
+#       #       echo "DATA_DIR=${{ secrets.DATA_DIR }}" >> .env
+#       #       echo "ARTIFACTS_DIR=${{ secrets.ARTIFACTS_DIR }}" >> .env
+#       #       echo "DATA_URL=${{ secrets.DATA_URL }}" >> .env
+#       #       echo "RAW_DATA_PATH=${{ secrets.RAW_DATA_PATH }}" >> .env
+#       #       echo "CLEANED_DATA_PATH=${{ secrets.CLEANED_DATA_PATH }}" >> .env
+#       #       echo "FEATURED_DATA_PATH=${{ secrets.FEATURED_DATA_PATH }}" >> .env
+#       #       echo "PROCESSED_DATA_PATH=${{ secrets.PROCESSED_DATA_PATH }}" >> .env
+#       #       echo "MODEL_PATH=${{ secrets.MODEL_PATH }}" >> .env
+#       #       echo "TEST_DATA=${{ secrets.TEST_DATA }}" >> .env
+#       #       echo "MODEL_INFO_PATH=${{ secrets.MODEL_INFO_PATH }}" >> .env
+#       #       echo "PREPROCESSOR_PATH=${{ secrets.PREPROCESSOR_PATH }}" >> .env
+#       #       echo "MLFLOW_TRACKING_PASSWORD=${{ secrets.DAGSHUB_TOKEN }}" >> .env
+#       #       echo "MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}" >> .env
+#       #       echo "DAGSHUB_REPO_NAME=${{ secrets.DAGSHUB_REPO_NAME }}" >> .env
+#       #       echo "DAGSHUB_USERNAME=${{ secrets.DAGSHUB_USERNAME }}" >> .env
 
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v4
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+#       - name: Login to Amazon ECR
+#         id: login-ecr
+#         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Pull Docker Image from ECR
-        run: |
-          IMAGE_TAG=${{ github.sha }}
-          ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
-          REPO_NAME=${{ secrets.ECR_REPOSITORY }}
+#       - name: Pull Docker Image from ECR
+#         run: |
+#           IMAGE_TAG=${{ github.sha }}
+#           ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
+#           REPO_NAME=${{ secrets.ECR_REPOSITORY }}
 
-          docker pull $ECR_REGISTRY/$REPO_NAME:$IMAGE_TAG
+#           docker pull $ECR_REGISTRY/$REPO_NAME:$IMAGE_TAG
 
-      - name: Run Docker Container
-        run: |
-          IMAGE_TAG=${{ github.sha }}
-          ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
-          REPO_NAME=${{ secrets.ECR_REPOSITORY }}
+#       - name: Run Docker Container
+#         run: |
+#           IMAGE_TAG=${{ github.sha }}
+#           ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
+#           REPO_NAME=${{ secrets.ECR_REPOSITORY }}
 
-          docker run -d -p 8000:8000 --name mlops_app -e DAGSHUB_USERNAME=${{ secrets.DAGSHUB_USERNAME }} -e DAGSHUB_PASSWORD=${{ secrets.DAGSHUB_TOKEN }} -e PREPROCESSOR_PATH=${{ secrets.PREPROCESSOR_PATH }} $ECR_REGISTRY/$REPO_NAME:$IMAGE_TAG
+#           docker run -d -p 8000:8000 --name mlops_app -e DAGSHUB_USERNAME=${{ secrets.DAGSHUB_USERNAME }} -e DAGSHUB_PASSWORD=${{ secrets.DAGSHUB_TOKEN }} -e PREPROCESSOR_PATH=${{ secrets.PREPROCESSOR_PATH }} $ECR_REGISTRY/$REPO_NAME:$IMAGE_TAG
 
         
