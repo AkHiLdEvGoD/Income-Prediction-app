@@ -84,7 +84,7 @@ docker run -p 8000:8000 income-prediction
   - Remote storage: **AWS S3**.  
   - Ensures reproducibility across experiments.
   
-![DVC Pipeline](images_docs\dvc_pipeline.png)
+![DVC Pipeline](images_docs/dvc_pipeline.png)
 
 ---
 
